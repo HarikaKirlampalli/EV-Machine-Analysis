@@ -1,0 +1,862 @@
+mysql> show databases;
++------------------------+
+| Database               |
++------------------------+
+| da4                    |
+| ev_machine_analysis    |
+| information_schema     |
+| jeevan_raksha_pharmacy |
+| lock_demo              |
+| mysql                  |
+| performance_schema     |
+| pfs4                   |
+| student_management     |
+| sys                    |
++------------------------+
+10 rows in set (0.01 sec)
+
+mysql> use ev_machine_analysis;
+Database changed
+
+mysql> -- =====================================================
+mysql> -- TABLE 1: MANUFACTURERS
+mysql> -- =====================================================
+mysql>
+mysql> CREATE TABLE Manufacturers (
+    ->     manufacturer_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     manufacturer_name VARCHAR(100) NOT NULL,
+    ->     country VARCHAR(50),
+    ->     founded_year INT
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> -- =====================================================
+mysql> -- TABLE 2: CATEGORIES
+mysql> -- =====================================================
+mysql>
+mysql> CREATE TABLE Categories (
+    ->     category_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     category_name VARCHAR(50) NOT NULL,
+    ->     description VARCHAR(255)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> -- =====================================================
+mysql> -- TABLE 3: STATES
+mysql> -- =====================================================
+mysql>
+mysql> CREATE TABLE States (
+    ->     state_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     state_name VARCHAR(100) NOT NULL,
+    ->     region VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> -- =====================================================
+mysql> -- TABLE 4: VEHICLES
+mysql> -- =====================================================
+mysql>
+mysql> CREATE TABLE Vehicles (
+    ->     vehicle_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     vehicle_name VARCHAR(100) NOT NULL,
+    ->     manufacturer_id INT NOT NULL,
+    ->     category_id INT NOT NULL,
+    ->     battery_capacity_kwh DECIMAL(6,2),
+    ->     range_km INT,
+    ->
+    ->     FOREIGN KEY (manufacturer_id)
+    ->         REFERENCES Manufacturers(manufacturer_id),
+    ->
+    ->     FOREIGN KEY (category_id)
+    ->         REFERENCES Categories(category_id)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> -- =====================================================
+mysql> -- TABLE 5: EV_SALES
+mysql> -- =====================================================
+mysql>
+mysql> CREATE TABLE EV_Sales (
+    ->     sale_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     vehicle_id INT NOT NULL,
+    ->     state_id INT NOT NULL,
+    ->     sale_year INT NOT NULL,
+    ->     sale_month INT NOT NULL,
+    ->     units_sold INT NOT NULL,
+    ->     revenue DECIMAL(15,2) NOT NULL,
+    ->
+    ->     FOREIGN KEY (vehicle_id)
+    ->         REFERENCES Vehicles(vehicle_id),
+    ->
+    ->     FOREIGN KEY (state_id)
+    ->         REFERENCES States(state_id)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> -- =====================================================
+mysql> -- TABLE 6: CHARGING_STATIONS
+mysql> -- =====================================================
+mysql>
+mysql> CREATE TABLE Charging_Stations (
+    ->     station_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     state_id INT NOT NULL,
+    ->     station_count INT NOT NULL,
+    ->     charging_type VARCHAR(50),
+    ->
+    ->     FOREIGN KEY (state_id)
+    ->         REFERENCES States(state_id)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> -- =====================================================
+mysql> -- CHECK ALL TABLES
+mysql> -- =====================================================
+mysql>
+mysql> SHOW TABLES;
++-------------------------------+
+| Tables_in_ev_machine_analysis |
++-------------------------------+
+| categories                    |
+| charging_stations             |
+| ev_sales                      |
+| manufacturers                 |
+| states                        |
+| vehicles                      |
++-------------------------------+
+6 rows in set (0.01 sec)
+
+mysql>
+mysql> -- 1. MANUFACTURERS
+mysql> INSERT INTO Manufacturers
+    -> (manufacturer_name, country, founded_year)
+    -> VALUES
+    -> ('Tata Motors', 'India', 1945),
+    -> ('Mahindra', 'India', 1945),
+    -> ('Hyundai', 'South Korea', 1967),
+    -> ('MG Motor', 'United Kingdom', 1924),
+    -> ('BYD', 'China', 1995);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql>
+mysql> -- 2. CATEGORIES
+mysql> INSERT INTO Categories
+    -> (category_name, description)
+    -> VALUES
+    -> ('Hatchback', 'Small electric passenger car'),
+    -> ('Sedan', 'Electric sedan car'),
+    -> ('SUV', 'Electric sport utility vehicle'),
+    -> ('MPV', 'Electric multi purpose vehicle'),
+    -> ('Luxury', 'Premium electric vehicle');
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql>
+mysql> -- 3. STATES
+mysql> INSERT INTO States
+    -> (state_name, region)
+    -> VALUES
+    -> ('Tamil Nadu', 'South'),
+    -> ('Karnataka', 'South'),
+    -> ('Kerala', 'South'),
+    -> ('Telangana', 'South'),
+    -> ('Maharashtra', 'West'),
+    -> ('Gujarat', 'West'),
+    -> ('Delhi', 'North'),
+    -> ('Punjab', 'North'),
+    -> ('Rajasthan', 'North'),
+    -> ('West Bengal', 'East');
+Query OK, 10 rows affected (0.00 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql>
+mysql> -- 4. VEHICLES
+mysql> INSERT INTO Vehicles
+    -> (vehicle_name, manufacturer_id, category_id,
+    ->  battery_capacity_kwh, range_km)
+    -> VALUES
+    -> ('Nexon EV', 1, 3, 40.5, 465),
+    -> ('Tiago EV', 1, 1, 24.0, 315),
+    -> ('XUV400', 2, 3, 39.4, 456),
+    -> ('eVerito', 2, 2, 18.5, 140),
+    -> ('Kona Electric', 3, 3, 39.2, 452),
+    -> ('Ioniq 5', 3, 5, 72.6, 631),
+    -> ('ZS EV', 4, 3, 50.3, 461),
+    -> ('Comet EV', 4, 1, 17.3, 230),
+    -> ('Atto 3', 5, 3, 60.5, 521),
+    -> ('e6', 5, 4, 71.7, 522);
+Query OK, 10 rows affected (0.00 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql>
+mysql> -- 5. EV SALES
+mysql> INSERT INTO EV_Sales
+    -> (vehicle_id, state_id, sale_year, sale_month,
+    ->  units_sold, revenue)
+    -> VALUES
+    -> (1, 1, 2024, 1, 450, 54000000),
+    -> (1, 2, 2024, 2, 380, 45600000),
+    -> (2, 1, 2024, 3, 520, 36400000),
+    -> (3, 5, 2024, 4, 300, 45000000),
+    -> (4, 6, 2024, 5, 150, 16500000),
+    -> (5, 7, 2024, 6, 250, 42500000),
+    -> (6, 8, 2024, 7, 180, 72000000),
+    -> (7, 9, 2024, 8, 220, 44000000),
+    -> (8, 10, 2024, 9, 350, 24500000),
+    -> (9, 5, 2025, 1, 400, 72000000),
+    -> (10, 6, 2025, 2, 280, 56000000),
+    -> (1, 1, 2025, 3, 600, 72000000),
+    -> (2, 2, 2025, 4, 550, 38500000),
+    -> (3, 5, 2025, 5, 420, 63000000),
+    -> (5, 7, 2025, 6, 320, 54400000);
+Query OK, 15 rows affected (0.00 sec)
+Records: 15  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql>
+mysql> -- 6. CHARGING STATIONS
+mysql> INSERT INTO Charging_Stations
+    -> (state_id, station_count, charging_type)
+    -> VALUES
+    -> (1, 850, 'Fast Charging'),
+    -> (2, 920, 'Fast Charging'),
+    -> (3, 600, 'Normal Charging'),
+    -> (4, 700, 'Fast Charging'),
+    -> (5, 1200, 'Fast Charging'),
+    -> (6, 750, 'Normal Charging'),
+    -> (7, 1500, 'Fast Charging'),
+    -> (8, 450, 'Normal Charging'),
+    -> (9, 500, 'Normal Charging'),
+    -> (10, 650, 'Fast Charging');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+
+mysql> SELECT * FROM manufacturers;
++-----------------+-------------------+----------------+--------------+
+| manufacturer_id | manufacturer_name | country        | founded_year |
++-----------------+-------------------+----------------+--------------+
+|               1 | Tata Motors       | India          |         1945 |
+|               2 | Mahindra          | India          |         1945 |
+|               3 | Hyundai           | South Korea    |         1967 |
+|               4 | MG Motor          | United Kingdom |         1924 |
+|               5 | BYD               | China          |         1995 |
++-----------------+-------------------+----------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT * FROM categories;
++-------------+---------------+--------------------------------+
+| category_id | category_name | description                    |
++-------------+---------------+--------------------------------+
+|           1 | Hatchback     | Small electric passenger car   |
+|           2 | Sedan         | Electric sedan car             |
+|           3 | SUV           | Electric sport utility vehicle |
+|           4 | MPV           | Electric multi purpose vehicle |
+|           5 | Luxury        | Premium electric vehicle       |
++-------------+---------------+--------------------------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT * FROM states;
++----------+-------------+--------+
+| state_id | state_name  | region |
++----------+-------------+--------+
+|        1 | Tamil Nadu  | South  |
+|        2 | Karnataka   | South  |
+|        3 | Kerala      | South  |
+|        4 | Telangana   | South  |
+|        5 | Maharashtra | West   |
+|        6 | Gujarat     | West   |
+|        7 | Delhi       | North  |
+|        8 | Punjab      | North  |
+|        9 | Rajasthan   | North  |
+|       10 | West Bengal | East   |
++----------+-------------+--------+
+10 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT * FROM vehicles;
++------------+---------------+-----------------+-------------+----------------------+----------+
+| vehicle_id | vehicle_name  | manufacturer_id | category_id | battery_capacity_kwh | range_km |
++------------+---------------+-----------------+-------------+----------------------+----------+
+|          1 | Nexon EV      |               1 |           3 |                40.50 |      465 |
+|          2 | Tiago EV      |               1 |           1 |                24.00 |      315 |
+|          3 | XUV400        |               2 |           3 |                39.40 |      456 |
+|          4 | eVerito       |               2 |           2 |                18.50 |      140 |
+|          5 | Kona Electric |               3 |           3 |                39.20 |      452 |
+|          6 | Ioniq 5       |               3 |           5 |                72.60 |      631 |
+|          7 | ZS EV         |               4 |           3 |                50.30 |      461 |
+|          8 | Comet EV      |               4 |           1 |                17.30 |      230 |
+|          9 | Atto 3        |               5 |           3 |                60.50 |      521 |
+|         10 | e6            |               5 |           4 |                71.70 |      522 |
++------------+---------------+-----------------+-------------+----------------------+----------+
+10 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT * FROM ev_sales;
++---------+------------+----------+-----------+------------+------------+-------------+
+| sale_id | vehicle_id | state_id | sale_year | sale_month | units_sold | revenue     |
++---------+------------+----------+-----------+------------+------------+-------------+
+|       1 |          1 |        1 |      2024 |          1 |        450 | 54000000.00 |
+|       2 |          1 |        2 |      2024 |          2 |        380 | 45600000.00 |
+|       3 |          2 |        1 |      2024 |          3 |        520 | 36400000.00 |
+|       4 |          3 |        5 |      2024 |          4 |        300 | 45000000.00 |
+|       5 |          4 |        6 |      2024 |          5 |        150 | 16500000.00 |
+|       6 |          5 |        7 |      2024 |          6 |        250 | 42500000.00 |
+|       7 |          6 |        8 |      2024 |          7 |        180 | 72000000.00 |
+|       8 |          7 |        9 |      2024 |          8 |        220 | 44000000.00 |
+|       9 |          8 |       10 |      2024 |          9 |        350 | 24500000.00 |
+|      10 |          9 |        5 |      2025 |          1 |        400 | 72000000.00 |
+|      11 |         10 |        6 |      2025 |          2 |        280 | 56000000.00 |
+|      12 |          1 |        1 |      2025 |          3 |        600 | 72000000.00 |
+|      13 |          2 |        2 |      2025 |          4 |        550 | 38500000.00 |
+|      14 |          3 |        5 |      2025 |          5 |        420 | 63000000.00 |
+|      15 |          5 |        7 |      2025 |          6 |        320 | 54400000.00 |
++---------+------------+----------+-----------+------------+------------+-------------+
+15 rows in set (0.00 sec)
+
+mysql>
+mysql> SELECT * FROM charging_stations;
++------------+----------+---------------+-----------------+
+| station_id | state_id | station_count | charging_type   |
++------------+----------+---------------+-----------------+
+|          1 |        1 |           850 | Fast Charging   |
+|          2 |        2 |           920 | Fast Charging   |
+|          3 |        3 |           600 | Normal Charging |
+|          4 |        4 |           700 | Fast Charging   |
+|          5 |        5 |          1200 | Fast Charging   |
+|          6 |        6 |           750 | Normal Charging |
+|          7 |        7 |          1500 | Fast Charging   |
+|          8 |        8 |           450 | Normal Charging |
+|          9 |        9 |           500 | Normal Charging |
+|         10 |       10 |           650 | Fast Charging   |
++------------+----------+---------------+-----------------+
+10 rows in set (0.00 sec)
+
+mysql> -- ============================================================
+mysql> -- 🟢 SIMPLE QUERIES (1 - 10)
+mysql> -- ============================================================
+mysql>
+mysql> -- Q1. Display all manufacturers.
+mysql> SELECT * FROM manufacturers;
++-----------------+-------------------+----------------+--------------+
+| manufacturer_id | manufacturer_name | country        | founded_year |
++-----------------+-------------------+----------------+--------------+
+|               1 | Tata Motors       | India          |         1945 |
+|               2 | Mahindra          | India          |         1945 |
+|               3 | Hyundai           | South Korea    |         1967 |
+|               4 | MG Motor          | United Kingdom |         1924 |
+|               5 | BYD               | China          |         1995 |
++-----------------+-------------------+----------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q2. Display all vehicles.
+mysql> SELECT * FROM vehicles;
++------------+---------------+-----------------+-------------+----------------------+----------+
+| vehicle_id | vehicle_name  | manufacturer_id | category_id | battery_capacity_kwh | range_km |
++------------+---------------+-----------------+-------------+----------------------+----------+
+|          1 | Nexon EV      |               1 |           3 |                40.50 |      465 |
+|          2 | Tiago EV      |               1 |           1 |                24.00 |      315 |
+|          3 | XUV400        |               2 |           3 |                39.40 |      456 |
+|          4 | eVerito       |               2 |           2 |                18.50 |      140 |
+|          5 | Kona Electric |               3 |           3 |                39.20 |      452 |
+|          6 | Ioniq 5       |               3 |           5 |                72.60 |      631 |
+|          7 | ZS EV         |               4 |           3 |                50.30 |      461 |
+|          8 | Comet EV      |               4 |           1 |                17.30 |      230 |
+|          9 | Atto 3        |               5 |           3 |                60.50 |      521 |
+|         10 | e6            |               5 |           4 |                71.70 |      522 |
++------------+---------------+-----------------+-------------+----------------------+----------+
+10 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q3. Find vehicles with range above 400 km.
+mysql> SELECT vehicle_name, range_km
+    -> FROM vehicles
+    -> WHERE range_km > 400;
++---------------+----------+
+| vehicle_name  | range_km |
++---------------+----------+
+| Nexon EV      |      465 |
+| XUV400        |      456 |
+| Kona Electric |      452 |
+| Ioniq 5       |      631 |
+| ZS EV         |      461 |
+| Atto 3        |      521 |
+| e6            |      522 |
++---------------+----------+
+7 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q4. Find vehicles with battery capacity above 40 kWh.
+mysql> SELECT vehicle_name, battery_capacity_kwh
+    -> FROM vehicles
+    -> WHERE battery_capacity_kwh > 40;
++--------------+----------------------+
+| vehicle_name | battery_capacity_kwh |
++--------------+----------------------+
+| Nexon EV     |                40.50 |
+| Ioniq 5      |                72.60 |
+| ZS EV        |                50.30 |
+| Atto 3       |                60.50 |
+| e6           |                71.70 |
++--------------+----------------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q5. Display EV sales records from 2024.
+mysql> SELECT *
+    -> FROM ev_sales
+    -> WHERE sale_year = 2024;
++---------+------------+----------+-----------+------------+------------+-------------+
+| sale_id | vehicle_id | state_id | sale_year | sale_month | units_sold | revenue     |
++---------+------------+----------+-----------+------------+------------+-------------+
+|       1 |          1 |        1 |      2024 |          1 |        450 | 54000000.00 |
+|       2 |          1 |        2 |      2024 |          2 |        380 | 45600000.00 |
+|       3 |          2 |        1 |      2024 |          3 |        520 | 36400000.00 |
+|       4 |          3 |        5 |      2024 |          4 |        300 | 45000000.00 |
+|       5 |          4 |        6 |      2024 |          5 |        150 | 16500000.00 |
+|       6 |          5 |        7 |      2024 |          6 |        250 | 42500000.00 |
+|       7 |          6 |        8 |      2024 |          7 |        180 | 72000000.00 |
+|       8 |          7 |        9 |      2024 |          8 |        220 | 44000000.00 |
+|       9 |          8 |       10 |      2024 |          9 |        350 | 24500000.00 |
++---------+------------+----------+-----------+------------+------------+-------------+
+9 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q6. Count total number of vehicles.
+mysql> SELECT COUNT(*) AS total_vehicles
+    -> FROM vehicles;
++----------------+
+| total_vehicles |
++----------------+
+|             10 |
++----------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q7. Count total number of manufacturers.
+mysql> SELECT COUNT(*) AS total_manufacturers
+    -> FROM manufacturers;
++---------------------+
+| total_manufacturers |
++---------------------+
+|                   5 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q8. Find total units sold.
+mysql> SELECT SUM(units_sold) AS total_units_sold
+    -> FROM ev_sales;
++------------------+
+| total_units_sold |
++------------------+
+|             5370 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q9. Find average vehicle range.
+mysql> SELECT ROUND(AVG(range_km), 2) AS average_range_km
+    -> FROM vehicles;
++------------------+
+| average_range_km |
++------------------+
+|           419.30 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q10. Find the maximum vehicle range.
+mysql> SELECT MAX(range_km) AS maximum_range_km
+    -> FROM vehicles;
++------------------+
+| maximum_range_km |
++------------------+
+|              631 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- ============================================================
+mysql> -- 🟡 INTERMEDIATE QUERIES (11 - 20)
+mysql> -- ============================================================
+mysql>
+mysql> -- Q11. Find the number of vehicles for each manufacturer.
+mysql> SELECT m.manufacturer_name,
+    ->        COUNT(v.vehicle_id) AS total_vehicles
+    -> FROM manufacturers m
+    -> JOIN vehicles v
+    ->   ON m.manufacturer_id = v.manufacturer_id
+    -> GROUP BY m.manufacturer_name;
++-------------------+----------------+
+| manufacturer_name | total_vehicles |
++-------------------+----------------+
+| Tata Motors       |              2 |
+| Mahindra          |              2 |
+| Hyundai           |              2 |
+| MG Motor          |              2 |
+| BYD               |              2 |
++-------------------+----------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q12. Find total EV sales for each manufacturer.
+mysql> SELECT m.manufacturer_name,
+    ->        SUM(e.units_sold) AS total_sales
+    -> FROM ev_sales e
+    -> JOIN vehicles v
+    ->   ON e.vehicle_id = v.vehicle_id
+    -> JOIN manufacturers m
+    ->   ON v.manufacturer_id = m.manufacturer_id
+    -> GROUP BY m.manufacturer_name
+    -> ORDER BY total_sales DESC;
++-------------------+-------------+
+| manufacturer_name | total_sales |
++-------------------+-------------+
+| Tata Motors       |        2500 |
+| Mahindra          |         870 |
+| Hyundai           |         750 |
+| BYD               |         680 |
+| MG Motor          |         570 |
++-------------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q13. Find total EV sales for each state.
+mysql> SELECT s.state_name,
+    ->        SUM(e.units_sold) AS total_sales
+    -> FROM ev_sales e
+    -> JOIN states s
+    ->   ON e.state_id = s.state_id
+    -> GROUP BY s.state_name
+    -> ORDER BY total_sales DESC;
++-------------+-------------+
+| state_name  | total_sales |
++-------------+-------------+
+| Tamil Nadu  |        1570 |
+| Maharashtra |        1120 |
+| Karnataka   |         930 |
+| Delhi       |         570 |
+| Gujarat     |         430 |
+| West Bengal |         350 |
+| Rajasthan   |         220 |
+| Punjab      |         180 |
++-------------+-------------+
+8 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q14. Find the number of vehicles in each category.
+mysql> SELECT c.category_name,
+    ->        COUNT(v.vehicle_id) AS total_vehicles
+    -> FROM categories c
+    -> JOIN vehicles v
+    ->   ON c.category_id = v.category_id
+    -> GROUP BY c.category_name;
++---------------+----------------+
+| category_name | total_vehicles |
++---------------+----------------+
+| Hatchback     |              2 |
+| Sedan         |              1 |
+| SUV           |              5 |
+| MPV           |              1 |
+| Luxury        |              1 |
++---------------+----------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q15. Find average vehicle range for each category.
+mysql> SELECT c.category_name,
+    ->        ROUND(AVG(v.range_km), 2) AS average_range_km
+    -> FROM categories c
+    -> JOIN vehicles v
+    ->   ON c.category_id = v.category_id
+    -> GROUP BY c.category_name
+    -> ORDER BY average_range_km DESC;
++---------------+------------------+
+| category_name | average_range_km |
++---------------+------------------+
+| Luxury        |           631.00 |
+| MPV           |           522.00 |
+| SUV           |           471.00 |
+| Hatchback     |           272.50 |
+| Sedan         |           140.00 |
++---------------+------------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q16. Find total EV sales for each year.
+mysql> SELECT sale_year,
+    ->        SUM(units_sold) AS total_sales
+    -> FROM ev_sales
+    -> GROUP BY sale_year
+    -> ORDER BY sale_year;
++-----------+-------------+
+| sale_year | total_sales |
++-----------+-------------+
+|      2024 |        2800 |
+|      2025 |        2570 |
++-----------+-------------+
+2 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q17. Find total revenue for each year.
+mysql> SELECT sale_year,
+    ->        SUM(revenue) AS total_revenue
+    -> FROM ev_sales
+    -> GROUP BY sale_year
+    -> ORDER BY sale_year;
++-----------+---------------+
+| sale_year | total_revenue |
++-----------+---------------+
+|      2024 |  380500000.00 |
+|      2025 |  355900000.00 |
++-----------+---------------+
+2 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q18. Find total charging stations in each state.
+mysql> SELECT s.state_name,
+    ->        SUM(c.station_count) AS total_charging_stations
+    -> FROM charging_stations c
+    -> JOIN states s
+    ->   ON c.state_id = s.state_id
+    -> GROUP BY s.state_name
+    -> ORDER BY total_charging_stations DESC;
++-------------+-------------------------+
+| state_name  | total_charging_stations |
++-------------+-------------------------+
+| Delhi       |                    1500 |
+| Maharashtra |                    1200 |
+| Karnataka   |                     920 |
+| Tamil Nadu  |                     850 |
+| Gujarat     |                     750 |
+| Telangana   |                     700 |
+| West Bengal |                     650 |
+| Kerala      |                     600 |
+| Rajasthan   |                     500 |
+| Punjab      |                     450 |
++-------------+-------------------------+
+10 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q19. Find the top 5 best-selling vehicles.
+mysql> SELECT v.vehicle_name,
+    ->        SUM(e.units_sold) AS total_sales
+    -> FROM ev_sales e
+    -> JOIN vehicles v
+    ->   ON e.vehicle_id = v.vehicle_id
+    -> GROUP BY v.vehicle_name
+    -> ORDER BY total_sales DESC
+    -> LIMIT 5;
++---------------+-------------+
+| vehicle_name  | total_sales |
++---------------+-------------+
+| Nexon EV      |        1430 |
+| Tiago EV      |        1070 |
+| XUV400        |         720 |
+| Kona Electric |         570 |
+| Atto 3        |         400 |
++---------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q20. Find the manufacturer with the highest total sales.
+mysql> SELECT m.manufacturer_name,
+    ->        SUM(e.units_sold) AS total_sales
+    -> FROM ev_sales e
+    -> JOIN vehicles v
+    ->   ON e.vehicle_id = v.vehicle_id
+    -> JOIN manufacturers m
+    ->   ON v.manufacturer_id = m.manufacturer_id
+    -> GROUP BY m.manufacturer_name
+    -> ORDER BY total_sales DESC
+    -> LIMIT 1;
++-------------------+-------------+
+| manufacturer_name | total_sales |
++-------------------+-------------+
+| Tata Motors       |        2500 |
++-------------------+-------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- ============================================================
+mysql> -- 🔴 HARD / ADVANCED QUERIES (21 - 30)
+mysql> -- ============================================================
+mysql>
+mysql> -- Q21. Find vehicles whose range is above the average range.
+mysql> SELECT vehicle_name, range_km
+    -> FROM vehicles
+    -> WHERE range_km > (
+    ->     SELECT AVG(range_km)
+    ->     FROM vehicles
+    -> )
+    -> ORDER BY range_km DESC;
++---------------+----------+
+| vehicle_name  | range_km |
++---------------+----------+
+| Ioniq 5       |      631 |
+| e6            |      522 |
+| Atto 3        |      521 |
+| Nexon EV      |      465 |
+| ZS EV         |      461 |
+| XUV400        |      456 |
+| Kona Electric |      452 |
++---------------+----------+
+7 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q22. Find vehicles whose battery capacity is above the average.
+mysql> SELECT vehicle_name, battery_capacity_kwh
+    -> FROM vehicles
+    -> WHERE battery_capacity_kwh > (
+    ->     SELECT AVG(battery_capacity_kwh)
+    ->     FROM vehicles
+    -> )
+    -> ORDER BY battery_capacity_kwh DESC;
++--------------+----------------------+
+| vehicle_name | battery_capacity_kwh |
++--------------+----------------------+
+| Ioniq 5      |                72.60 |
+| e6           |                71.70 |
+| Atto 3       |                60.50 |
+| ZS EV        |                50.30 |
++--------------+----------------------+
+4 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q23. Find the state with the highest EV sales.
+mysql> SELECT s.state_name,
+    ->        SUM(e.units_sold) AS total_sales
+    -> FROM ev_sales e
+    -> JOIN states s
+    ->   ON e.state_id = s.state_id
+    -> GROUP BY s.state_name
+    -> ORDER BY total_sales DESC
+    -> LIMIT 1;
++------------+-------------+
+| state_name | total_sales |
++------------+-------------+
+| Tamil Nadu |        1570 |
++------------+-------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q24. Find the category with the highest EV sales.
+mysql> SELECT c.category_name,
+    ->        SUM(e.units_sold) AS total_sales
+    -> FROM ev_sales e
+    -> JOIN vehicles v
+    ->   ON e.vehicle_id = v.vehicle_id
+    -> JOIN categories c
+    ->   ON v.category_id = c.category_id
+    -> GROUP BY c.category_name
+    -> ORDER BY total_sales DESC
+    -> LIMIT 1;
++---------------+-------------+
+| category_name | total_sales |
++---------------+-------------+
+| SUV           |        3340 |
++---------------+-------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q25. Categorize vehicles based on their range.
+mysql> SELECT vehicle_name,
+    ->        range_km,
+    ->        CASE
+    ->            WHEN range_km < 300 THEN 'Low Range'
+    ->            WHEN range_km <= 450 THEN 'Medium Range'
+    ->            ELSE 'High Range'
+    ->        END AS range_category
+    -> FROM vehicles
+    -> ORDER BY range_km DESC;
++---------------+----------+----------------+
+| vehicle_name  | range_km | range_category |
++---------------+----------+----------------+
+| Ioniq 5       |      631 | High Range     |
+| e6            |      522 | High Range     |
+| Atto 3        |      521 | High Range     |
+| Nexon EV      |      465 | High Range     |
+| ZS EV         |      461 | High Range     |
+| XUV400        |      456 | High Range     |
+| Kona Electric |      452 | High Range     |
+| Tiago EV      |      315 | Medium Range   |
+| Comet EV      |      230 | Low Range      |
+| eVerito       |      140 | Low Range      |
++---------------+----------+----------------+
+10 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql> -- Q26. Rank manufacturers based on total EV sales.
+mysql> SELECT manufacturer_name,
+    ->        total_sales,
+    ->        RANK() OVER (ORDER BY total_sales DESC) AS sales_rank
+    -> FROM (
+    ->     SELECT m.manufacturer_name,
+    ->            SUM(e.units_sold) AS total_sales
+    ->     FROM ev_sales e
+    ->     JOIN vehicles v
+    ->       ON e.vehicle_id = v.vehicle_id
+    ->     JOIN manufacturers m
+    ->       ON v.manufacturer_id = m.manufacturer_id
+    ->     GROUP BY m.manufacturer_name
+    -> ) AS manufacturer_sales;
++-------------------+-------------+------------+
+| manufacturer_name | total_sales | sales_rank |
++-------------------+-------------+------------+
+| Tata Motors       |        2500 |          1 |
+| Mahindra          |         870 |          2 |
+| Hyundai           |         750 |          3 |
+| BYD               |         680 |          4 |
+| MG Motor          |         570 |          5 |
++-------------------+-------------+------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql> -- Q27. Find states where total EV sales are higher
+mysql> --     than the number of charging stations.
+mysql> SELECT s.state_name,
+    ->        SUM(e.units_sold) AS total_sales,
+    ->        SUM(c.station_count) AS total_charging_stations
+    -> FROM states s
+    -> JOIN ev_sales e
+    ->   ON s.state_id = e.state_id
+    -> JOIN charging_stations c
+    ->   ON s.state_id = c.state_id
+    -> GROUP BY s.state_id, s.state_name
+    -> HAVING SUM(e.units_sold) > SUM(c.station_count)
+    -> ORDER BY total_sales DESC;
+Empty set (0.00 sec)
+
